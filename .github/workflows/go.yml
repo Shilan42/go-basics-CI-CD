@@ -3,7 +3,7 @@ name: Go
 
 on:
   push:
-    branches: ["new_workflow"]
+    branches: ["main"]
 
 jobs:
 
@@ -25,3 +25,21 @@ jobs:
 
     - name: Test
       run: go test -v ./...
+
+  tests-race:
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v3
+    - uses: actions/setup-go@v4
+
+    - name: Test
+      run: go test -race -v ./...
+
+  lint:
+    needs: [tests, tests-race]
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-go@v4
+      - uses: golangci/golangci-lint-action@v8
